@@ -4,8 +4,17 @@
     <title>じゃんけんゲーム</title>
   </head>
   <body>
+    <h1>Janken GAME!</h1>
     <div th:if="${jankenpost}">
       Hi [[${jankenpost}]]
+    </div>
+    <a href="/jankengame?hand=Gu">ぐー</a>
+    <a href="/jankengame?hand=Tyo">ちょき</a>
+    <a href="/jankengame?hand=Pa">ぱー</a>
+    <div th:if="${jankenResult}">
+      <p>あなたの手 [[${hand}]]</p>
+      <p>相手の手 Gu</p>
+      <p>結果 [[${jankenResult}]]</p>
     </div>
   </body>
 </html>
