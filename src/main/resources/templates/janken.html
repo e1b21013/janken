@@ -4,9 +4,16 @@
     <title>じゃんけんゲーム</title>
   </head>
   <body>
+    <div><a href="/logout">ログアウト</a></div>
     <h1>Janken GAME!</h1>
-    <div th:if="${jankenpost}">
-      Hi [[${jankenpost}]]
+    <p>エントリー</p>
+    <div th:if="${entry}">
+      <ul>
+        <li th:each="user : ${entry.users}">[[${user}]]</li>
+      </ul>
+    </div>
+    <div th:if="${login_user}">
+      Hi [[${login_user}]]
     </div>
     <a href="/jankengame?hand=Gu">ぐー</a>
     <a href="/jankengame?hand=Tyo">ちょき</a>
