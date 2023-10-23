@@ -5,7 +5,7 @@ public class Janken {
 
   public Janken(String hand) {
     if (hand.equals("Gu")) {
-      Result = "Aiko";
+      Result = "Draw";
     } else if (hand.equals("Pa")) {
       Result = "You Win!";
     } else {

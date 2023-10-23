@@ -5,10 +5,11 @@ import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+//import org.springframework.web.bind.annotation.PathVariable;
+//import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import oit.is.z2086.kaizi.janken.model.Janken;
@@ -63,12 +64,25 @@ public class JankenController {
   /**
    *
    */
-  @GetMapping("/jankengame")
-  public String jankenGame(@RequestParam String hand, ModelMap model1, ModelMap model2) {
+  @GetMapping("/fight")
+  @Transactional
+  public String fight_set(@RequestParam String hand, @RequestParam Integer id,ModelMap model,Principal prin) {
     Janken jn = new Janken(hand);
-    model1.addAttribute("hand", hand);
-    model2.addAttribute("jankenResult", jn.getResult());
-    return "janken.html";
+    String cpu_hand = "Gu";
+    String loginUser = prin.getName();
+    User user2 = userMapper.selectByName(loginUser);
+    model.addAttribute("login_user", loginUser);
+    User user = userMapper.selectById(id);
+    model.addAttribute("user", user);
+    Match match = new Match();
+    match.setUser1(user2.getId());
+    match.setUser2(id);
+    match.setUser1Hand(hand);
+    match.setUser2Hand(cpu_hand);
+    matchMapper.insertMatch(match);
+    model.addAttribute("match", match);
+    model.addAttribute("jankenResult", jn.getResult());
+    return "match.html";
   }
 
 }
