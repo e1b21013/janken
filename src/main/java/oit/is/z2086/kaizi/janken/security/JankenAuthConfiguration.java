@@ -35,7 +35,7 @@ public class JankenAuthConfiguration {
             .ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/*")))
         .headers(headers -> headers
             .frameOptions(frameOptions -> frameOptions
-                .sameOrigin()));; // それ以外は全員アクセス可能
+                .sameOrigin())); // それ以外は全員アクセス可能
     return http.build();
   }
 
