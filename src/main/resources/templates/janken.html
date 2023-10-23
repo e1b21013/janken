@@ -15,13 +15,15 @@
         <a>[[${user.name}]]</a>
       </li>
     </ul>
-    <a href="/jankengame?hand=Gu">ぐー</a>
-    <a href="/jankengame?hand=Tyo">ちょき</a>
-    <a href="/jankengame?hand=Pa">ぱー</a>
-    <div th:if="${jankenResult}">
-      <p>あなたの手 [[${hand}]]</p>
-      <p>相手の手 Gu</p>
-      <p>結果 [[${jankenResult}]]</p>
+    <h2>試合結果</h2>
+    <div th:each="match : ${matches}">
+      <tr>
+        <td>id:[[${match.id}]]</td>
+        <td>user1:[[${match.user1}]]</td>
+        <td>user2:[[${match.user2}]]</td>
+        <td>user1Hand:[[${match.user1Hand}]]</td>
+        <td>user2Hand:[[${match.user2Hand}]]</td>
+      </tr>
     </div>
   </body>
 </html>
