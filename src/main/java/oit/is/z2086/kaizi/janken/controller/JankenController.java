@@ -18,6 +18,8 @@ import oit.is.z2086.kaizi.janken.model.UserMapper;
 import oit.is.z2086.kaizi.janken.model.User;
 import oit.is.z2086.kaizi.janken.model.Match;
 import oit.is.z2086.kaizi.janken.model.MatchMapper;
+import oit.is.z2086.kaizi.janken.model.MatchInfo;
+import oit.is.z2086.kaizi.janken.model.MatchInfoMapper;
 
 @Controller
 public class JankenController {
@@ -29,6 +31,9 @@ public class JankenController {
 
   @Autowired
   MatchMapper matchMapper;
+
+  @Autowired
+  MatchInfoMapper matchinfomapper;
 
   @GetMapping("/janken")
   public String janken_get(ModelMap model,Principal prin) {
@@ -67,22 +72,16 @@ public class JankenController {
   @GetMapping("/fight")
   @Transactional
   public String fight_set(@RequestParam String hand, @RequestParam Integer id,ModelMap model,Principal prin) {
-    Janken jn = new Janken(hand);
-    String cpu_hand = "Gu";
     String loginUser = prin.getName();
     User user2 = userMapper.selectByName(loginUser);
     model.addAttribute("login_user", loginUser);
-    User user = userMapper.selectById(id);
-    model.addAttribute("user", user);
-    Match match = new Match();
-    match.setUser1(user2.getId());
-    match.setUser2(id);
-    match.setUser1Hand(hand);
-    match.setUser2Hand(cpu_hand);
-    matchMapper.insertMatch(match);
-    model.addAttribute("match", match);
-    model.addAttribute("jankenResult", jn.getResult());
-    return "match.html";
+    MatchInfo matchinfo = new MatchInfo();
+    matchinfo.setUser1(user2.getId());
+    matchinfo.setUser2(id);
+    matchinfo.setUser1Hand(hand);
+    matchinfo.setActive(true);
+    matchinfomapper.insertinfo(matchinfo);
+    return "wait.html";
   }
 
 }
