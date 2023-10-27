@@ -33,7 +33,7 @@ public class JankenController {
   MatchMapper matchMapper;
 
   @Autowired
-  MatchInfoMapper matchinfomapper;
+  MatchInfoMapper matchInfoMapper;
 
   @GetMapping("/janken")
   public String janken_get(ModelMap model,Principal prin) {
@@ -42,19 +42,13 @@ public class JankenController {
     model.addAttribute("login_user", loginUser);
     ArrayList<User> users = userMapper.selectAllUsers();
     model.addAttribute("users", users);
+    ArrayList<MatchInfo> matchInfos = matchInfoMapper.selectactive();
+    model.addAttribute("matchInfos", matchInfos);
     ArrayList<Match> matches = matchMapper.selectAllMatch();
     model.addAttribute("matches", matches);
-    // model.addAttribute("entry", this.entry);
     return "janken.html";
   }
 
-  /*
-   * @PostMapping("/janken")
-   * public String janken_post(@RequestParam String name1, ModelMap model) {
-   * model.addAttribute("jankenpost", name1);
-   * return "janken.html";
-   * }
-   */
   @GetMapping("/match")
   public String match_post
   (@RequestParam Integer id,Principal prin, ModelMap model)
@@ -80,7 +74,7 @@ public class JankenController {
     matchinfo.setUser2(id);
     matchinfo.setUser1Hand(hand);
     matchinfo.setActive(true);
-    matchinfomapper.insertinfo(matchinfo);
+    matchInfoMapper.insertinfo(matchinfo);
     return "wait.html";
   }
 
