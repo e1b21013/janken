@@ -1,12 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.springframework.org/schema/security">
   <head>
+    <meta charset="utf-8">
     <title>じゃんけんゲーム</title>
+    <script>
+      window.onload = function () {
+        var sse = new EventSource('/result');
+        sse.onmessage = function (event) {
+          console.log("sse.onmessage")
+          console.log(event.data);
+          var result = JSON.parse(event.data);
+          var result_table="";
+          var bgn_div="<div>"
+          var end_div="</div>"
+          var f_h2 = "<h2>結果</h2>";
+          var bgn_p = "<p>";
+          var end_p = "</p>";
+          var f_user1 = "Match : id" + result.id;
+          var f_user1 = "user1 : " +  result.user1;
+          var f_user2 = "user2 : " +  result.user2;
+          var f_user1Hand = "user1Hand : " +  result.user1Hand;
+          var f_user2Hand = "user2Hand : " +  result.user2Hand;
+          var f_back = "<a href='/janken'>もどる</a>"
+          result_table = bgn_div + f_h2 + bgn_p + f_id + f_user1 + f_user2 + f_user1Hand + f_user2Hand + end_p + f_back+ end_div;
+          console.log(result_table);
+          var div=document.getElementById("resultlist");div.innerHTML = result_table;
+        }
+      }
+    </script>
   </head>
   <body>
     <h1>
       相手の手を待ってます
     </h1>
     <p>Hi [[${login_user}]]</p>
+    <div id="resultlist">
+      <div th:if="${match}">
+        <h2>結果</h2>
+        <p>
+          Match:id [[${match.id}]]
+          user1: [[${match.user1}]]
+          user2: [[${match.user2}]]
+          user1Hand: [[${match.user1Hand}]]
+          user2Hand: [[${match.user2Hand}]]
+        </p>
+        <a href="/janken">もどる</a>
+      </div>
+    </div>
   </body>
 </html>
