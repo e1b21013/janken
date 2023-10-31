@@ -18,6 +18,7 @@ import oit.is.z2086.kaizi.janken.model.MatchMapper;
 @Service
 public class AsyncKekka {
   boolean result_flag = false;
+  int cnt=0;
   private final Logger logger = LoggerFactory.getLogger(AsyncKekka.class);
 
   @Autowired
@@ -53,8 +54,13 @@ public class AsyncKekka {
         }
         Match match = this.syncShowMatch();
         emitter.send(match);
-        result_flag = false;
-        matchMapper.updateMatchByusers(match.getUser1(), match.getUser2());
+        cnt++;
+        if (cnt == 2) {
+          result_flag = false;
+          matchMapper.updateMatchByusers(match.getUser1(), match.getUser2());
+          cnt = 0;
+        }
+        TimeUnit.MILLISECONDS.sleep(10000);
       }
     } catch (Exception e) {
       logger.warn("Exception:" + e.getClass().getName() + ":" + e.getMessage());
