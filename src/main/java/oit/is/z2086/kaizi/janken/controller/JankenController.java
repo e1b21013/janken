@@ -1,8 +1,11 @@
 package oit.is.z2086.kaizi.janken.controller;
 
+//import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,8 +14,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 //import org.springframework.web.bind.annotation.PathVariable;
 //import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import oit.is.z2086.kaizi.janken.model.Janken;
+//import oit.is.z2086.kaizi.janken.model.Janken;
 import oit.is.z2086.kaizi.janken.model.Entry;
 import oit.is.z2086.kaizi.janken.model.UserMapper;
 import oit.is.z2086.kaizi.janken.model.User;
@@ -20,6 +25,7 @@ import oit.is.z2086.kaizi.janken.model.Match;
 import oit.is.z2086.kaizi.janken.model.MatchMapper;
 import oit.is.z2086.kaizi.janken.model.MatchInfo;
 import oit.is.z2086.kaizi.janken.model.MatchInfoMapper;
+import oit.is.z2086.kaizi.janken.service.AsyncKekka;
 
 @Controller
 public class JankenController {
@@ -35,8 +41,13 @@ public class JankenController {
   @Autowired
   MatchInfoMapper matchInfoMapper;
 
+  @Autowired
+  private AsyncKekka asynckekka;
+
+  private final Logger logger = LoggerFactory.getLogger(JankenController.class);
+
   @GetMapping("/janken")
-  public String janken_get(ModelMap model,Principal prin) {
+  public String janken_get(ModelMap model, Principal prin) {
     String loginUser = prin.getName();
     this.entry.addUser(loginUser);
     model.addAttribute("login_user", loginUser);
@@ -50,9 +61,7 @@ public class JankenController {
   }
 
   @GetMapping("/match")
-  public String match_post
-  (@RequestParam Integer id,Principal prin, ModelMap model)
-  {
+  public String match_post(@RequestParam Integer id, Principal prin, ModelMap model) {
     String loginUser = prin.getName();
     this.entry.addUser(loginUser);
     model.addAttribute("login_user", loginUser);
@@ -60,22 +69,39 @@ public class JankenController {
     model.addAttribute("user", user);
     return "match.html";
   }
+
   /**
    *
    */
   @GetMapping("/fight")
   @Transactional
-  public String fight_set(@RequestParam String hand, @RequestParam Integer id,ModelMap model,Principal prin) {
+  public String fight_set(@RequestParam String hand, @RequestParam Integer id, ModelMap model, Principal prin) {
     String loginUser = prin.getName();
-    User user2 = userMapper.selectByName(loginUser);
+    User loUser = userMapper.selectByName(loginUser);
     model.addAttribute("login_user", loginUser);
-    MatchInfo matchinfo = new MatchInfo();
-    matchinfo.setUser1(user2.getId());
-    matchinfo.setUser2(id);
-    matchinfo.setUser1Hand(hand);
-    matchinfo.setActive(true);
-    matchInfoMapper.insertinfo(matchinfo);
+    MatchInfo matchInfo = new MatchInfo();
+    matchInfo = matchInfoMapper.SelectByUsers(id, loUser.getId());
+    if (matchInfo != null) {
+      Match match = new Match();
+      match = asynckekka.setMatches(matchInfo.getUser1(), matchInfo.getUser2(), matchInfo.getUser1Hand(), hand);
+      model.addAttribute("match", match);
+      matchInfoMapper.updateMatchInfo(match.getUser1(), match.getUser2());
+    } else {
+      MatchInfo matchinfo = new MatchInfo();
+      matchinfo.setUser1(loUser.getId());
+      matchinfo.setUser2(id);
+      matchinfo.setUser1Hand(hand);
+      matchinfo.setActive(true);
+      matchInfoMapper.insertinfo(matchinfo);
+    }
     return "wait.html";
   }
-
+  @GetMapping("/result")
+  public SseEmitter matchresult(ModelMap model, Principal prin) {
+    final SseEmitter emitter = new SseEmitter();
+    String loginUser = prin.getName();
+    model.addAttribute("login_user", loginUser);
+    this.asynckekka.asyncKekka(emitter);
+    return emitter;
+    }
 }
