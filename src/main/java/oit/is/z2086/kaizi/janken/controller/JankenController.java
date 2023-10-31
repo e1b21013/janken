@@ -42,7 +42,7 @@ public class JankenController {
   MatchInfoMapper matchInfoMapper;
 
   @Autowired
-  private AsyncKekka asynckekka;
+  AsyncKekka asynckekka;
 
   private final Logger logger = LoggerFactory.getLogger(JankenController.class);
 
@@ -78,13 +78,12 @@ public class JankenController {
   public String fight_set(@RequestParam String hand, @RequestParam Integer id, ModelMap model, Principal prin) {
     String loginUser = prin.getName();
     User loUser = userMapper.selectByName(loginUser);
-    model.addAttribute("login_user", loginUser);
+    ;
     MatchInfo matchInfo = new MatchInfo();
     matchInfo = matchInfoMapper.SelectByUsers(id, loUser.getId());
     if (matchInfo != null) {
       Match match = new Match();
       match = asynckekka.setMatches(matchInfo.getUser1(), matchInfo.getUser2(), matchInfo.getUser1Hand(), hand);
-      model.addAttribute("match", match);
       matchInfoMapper.updateMatchInfo(match.getUser1(), match.getUser2());
     } else {
       MatchInfo matchinfo = new MatchInfo();
@@ -96,11 +95,10 @@ public class JankenController {
     }
     return "wait.html";
   }
+
   @GetMapping("/result")
-  public SseEmitter matchresult(ModelMap model, Principal prin) {
+  public SseEmitter matchresult() {
     final SseEmitter emitter = new SseEmitter();
-    String loginUser = prin.getName();
-    model.addAttribute("login_user", loginUser);
     this.asynckekka.asyncKekka(emitter);
     return emitter;
     }
