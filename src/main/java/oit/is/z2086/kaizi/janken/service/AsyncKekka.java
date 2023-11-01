@@ -8,12 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import oit.is.z2086.kaizi.janken.model.MatchInfo;
 import oit.is.z2086.kaizi.janken.model.MatchInfoMapper;
 import oit.is.z2086.kaizi.janken.model.Match;
 import oit.is.z2086.kaizi.janken.model.MatchMapper;
+import oit.is.z2086.kaizi.janken.model.Janken;
 
 @Service
 public class AsyncKekka {

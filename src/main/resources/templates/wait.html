@@ -10,9 +10,15 @@
           console.log("sse.onmessage")
           console.log(event.data);
           var result = JSON.parse(event.data);
-
+          if(result.user1Hand==result.user2Hand){
+            var match="Draw";
+          }else if((result.user1Hand=='Gu' && result.user2Hand=='Tyo')||(result.user1Hand=='Pa' && result.user2Hand=='Gu')||(result.user1Hand=='Tyo' && result.user2Hand=='Pa')){
+            var match = "user1 Win";
+          }else {
+            var match = "user2 Win";
+          }
           var div = document.getElementById("resultlist");
-          div.innerHTML ="<h2>結果</h2><p>Match:id"+result.id +" user1: "+ result.user1+" user2: "+result.user2+" user1Hand: "+result.user1Hand+" user2Hand: "+result.user2Hand+ "</p><a href="+"/ janken"+">もどる</a>";
+          div.innerHTML = "<h2>結果</h2><p>Match:id" + result.id + " user1: " + result.user1 + " user2: " + result.user2 + " user1Hand: " + result.user1Hand + " user2Hand: " + result.user2Hand + "</p>" + "<p>"+match + "</p><a href=" + "/janken" + ">もどる</a>";
         }
       }
     </script>

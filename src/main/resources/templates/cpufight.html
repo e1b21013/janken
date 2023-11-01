@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>じゃんけんゲーム</title>
+</head>
+
+<body>
+<div><a href="/logout">ログアウト</a></div>
+<h1>CpuMatch</h1>
+<h1><a sec:authentication="name"></a> vs CPU</h1>
+<h2>結果</h2>
+<p>
+  Match id:[[${match.id}]]
+  user1:[[${match.user1}]]
+  user2:[[${match.user2}]]
+  user1Hand:[[${match.user1Hand}]]
+  user2Hand:[[${match.user2Hand}]]
+</p>
+<p>
+  [[${result}]]
+</p>
+<p>
+  <a href="/janken">もどる</a>
+</p>
+</body>
+</html>

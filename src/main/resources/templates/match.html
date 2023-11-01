@@ -9,9 +9,11 @@
   <div><a href="/logout">ログアウト</a></div>
   <h1>Match</h1>
   <h1>[[${login_user}]] vs [[${user.name}]]</h1>
-  <a href="/fight" th:href="@{/fight(hand=${'Gu'},id=${user.id})}">ぐー</a>
-  <a href="/fight" th:href="@{/fight(hand=${'Tyo'},id=${user.id})}">ちょき</a>
-  <a href="/fight" th:href="@{/fight(hand=${'Pa'},id=${user.id})}">ぱー</a>
+  <div>
+    <a href="/fight" th:href="@{/fight(hand=${'Gu'},id=${user.id})}">ぐー</a>
+    <a href="/fight" th:href="@{/fight(hand=${'Tyo'},id=${user.id})}">ちょき</a>
+    <a href="/fight" th:href="@{/fight(hand=${'Pa'},id=${user.id})}">ぱー</a>
+  </div>
   <p>
     <a href="/janken">もどる</a>
   </p>
