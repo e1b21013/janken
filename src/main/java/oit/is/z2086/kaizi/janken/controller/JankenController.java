@@ -17,8 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-//import oit.is.z2086.kaizi.janken.model.Janken;
+
 import oit.is.z2086.kaizi.janken.model.Entry;
+import oit.is.z2086.kaizi.janken.model.Janken;
 import oit.is.z2086.kaizi.janken.model.UserMapper;
 import oit.is.z2086.kaizi.janken.model.User;
 import oit.is.z2086.kaizi.janken.model.Match;
@@ -44,7 +45,6 @@ public class JankenController {
   @Autowired
   AsyncKekka asynckekka;
 
-  private final Logger logger = LoggerFactory.getLogger(JankenController.class);
 
   @GetMapping("/janken")
   public String janken_get(ModelMap model, Principal prin) {
@@ -70,21 +70,31 @@ public class JankenController {
     return "match.html";
   }
 
-  /**
-   *
-   */
   @GetMapping("/fight")
   @Transactional
   public String fight_set(@RequestParam String hand, @RequestParam Integer id, ModelMap model, Principal prin) {
     String loginUser = prin.getName();
     User loUser = userMapper.selectByName(loginUser);
-    ;
+    User user2=userMapper.selectByName("CPU");
     MatchInfo matchInfo = new MatchInfo();
     matchInfo = matchInfoMapper.SelectByUsers(id, loUser.getId());
     if (matchInfo != null) {
       Match match = new Match();
       match = asynckekka.setMatches(matchInfo.getUser1(), matchInfo.getUser2(), matchInfo.getUser1Hand(), hand);
       matchInfoMapper.updateMatchInfo(match.getUser1(), match.getUser2());
+    } else if(id==user2.getId()){
+      Janken janken = new Janken();
+      janken.CpuJanken(hand);
+      Match match = new Match();
+      match.setUser1(loUser.getId());
+      match.setUser2(user2.getId());
+      match.setUser1Hand(hand);
+      match.setUser2Hand(janken.getCpuHand());
+      match.setActive(false);
+      matchMapper.insertMatches(match);
+      model.addAttribute("match", match);
+      model.addAttribute("result", janken.getResult());
+      return "cpufight.html";
     } else {
       MatchInfo matchinfo = new MatchInfo();
       matchinfo.setUser1(loUser.getId());
